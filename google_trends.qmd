@@ -1,0 +1,135 @@
+---
+title: "How to get data from Google trends API in R"
+author: "David Schoch"
+format:
+  html: 
+    theme: cerulean
+---
+
+In this tutorial, you will learn how to obtain data from [Google trends](https://trends.google.com)[^1] using the R package 
+[gtrendsR](https://github.com/PMassicotte/gtrendsR).
+
+[^1]:  Google trends shows how frequently a given search term is searched for, relative to the total search volume over a given time period.
+
+## Install and load
+
+Installing the package is as simple as any other package:
+```{r}
+#| label: install
+#| eval: false
+
+install.packages("gtrendsR")
+```
+(*This tutorial is written with version `r packageVersion("gtrendsR")`.*)  
+
+No further configuration is needed, but make sure to not send too many requests in a short period of time
+because Google can decide to block you.
+
+The package can be loaded with
+```{r}
+#| label: load
+
+library(gtrendsR)
+```
+
+For data wrangling and visualization tasks we use the [tidyverse](https://www.tidyverse.org/).
+
+```{r}
+#| label: tidyverse
+#| message: false
+#| warning: false
+
+# install.packages(tidyverse)
+library(tidyverse)
+```
+
+The tutorial is written with `r R.version$version.string` which comes with a native 
+pipe operator `|>`. If you are using an R version 3.x, you need to substitute it with `%>%`.
+
+## Getting data
+
+The Package only has one function called `gtrends` which does all the querying of Google Trends automatically.
+You can get help about its parameters with
+```{r}
+#| label: help
+#| eval: false
+
+?gtrends
+```
+
+Supplying just the keyword queries for global trend data of the last five years on a weekly basis.
+```{r}
+#| label: example1
+#| cache: true
+
+covid_tbl <- gtrends(keyword = "covid")
+```
+
+The `trend_tbl` is a list of data frames with different granularity of the trend result.
+```{r}
+#| label: trend_object
+names(covid_tbl)
+```
+
+`interest_over_time` includes the search relevance over time.
+```{r}
+#| label: plot_interest_over_time_covid
+covid_tbl$interest_over_time |> 
+    mutate(hits = as.numeric(gsub("<","",hits))) |> 
+    ggplot(aes(x=date,y=hits))+
+    geom_line()
+
+```
+
+Several keywords can be specified to compare search trends.
+
+```{r}
+#| label: example2
+#| cache: true
+
+covax_tbl <- gtrends(keyword = c("covid","vaccine"))
+```
+
+```{r}
+#| label: plot_interest_over_time_covax
+covax_tbl$interest_over_time |> 
+    mutate(hits = as.numeric(gsub("<","",hits))) |> 
+    ggplot(aes(x=date,y=hits,col=keyword))+
+    geom_line()
+
+```
+
+The data frame `related_queries` lists search queries that are most related to the provided keyword(s).
+
+```{r}
+#| label: plot_related_queries_covid
+
+covid_tbl$related_queries |> 
+    filter(related_queries=="top") |> 
+    mutate(subject = as.numeric(subject)) |> 
+    top_n(10,subject) |> 
+    ggplot(aes(x=subject,y=reorder(value,subject))) + 
+    geom_col()
+
+```
+
+## Other things to try
+
+The examples above use default values for the parameters `geo` and `time` which 
+return world-wide trends of the last 5 years. To restrict results to (a) specific location(s) use
+2 letter country codes provided in `data("countries")` for the `geo` parameter. 
+
+To adjust the `time` parameter, consult the help of `gtrends`. For instance, to get the results for the whole
+history of Google trends, set `time = "all"`. For a specific time window, say 2020, set `time = "2020-01-01 2020-12-31"`.
+
+Here is an example of an interesting "anti-correlation" for two keywords on a short time window in the US.
+```{r}
+#| label: example3
+#| cache: true
+cor_tbl <- gtrends(keyword = c("ramen","bitcoin"), geo = "US",time = "now 7-d")
+cor_tbl$interest_over_time |> 
+    mutate(hits = as.numeric(gsub("<","",hits))) |> 
+    ggplot(aes(x=date,y=hits,col=keyword))+
+    geom_line()
+```
+
