@@ -1,13 +1,25 @@
 ---
-title: "How to get data from Google trends API in R"
-author: "David Schoch"
+title: How to get data from Google trends API in R
+author:
+  - name:
+      given: David
+      family: Schoch
+    email: david.schoch@gesis.org
+    orcid: 0000-0003-2952-4812
+    affiliations:
+      - name: "GESIS - Leibniz Institute for the Social Sciences"
+csl: apa.csl
 format:
-  html: 
-    theme: cerulean
+  html: default
+  ipynb: default
+license: CC BY
 ---
 
-In this tutorial, you will learn how to obtain data from [Google trends](https://trends.google.com)[^1] using the R package 
-[gtrendsR](https://github.com/PMassicotte/gtrendsR).
+
+## Learning Objectives
+
+By the end of this tutorial, you will be able to obtain data from [Google trends](https://trends.google.com)[^1] using the R package 
+[gtrendsR](https://github.com/PMassicotte/gtrendsR)
 
 [^1]:  Google trends shows how frequently a given search term is searched for, relative to the total search volume over a given time period.
 
@@ -42,9 +54,6 @@ For data wrangling and visualization tasks we use the [tidyverse](https://www.ti
 # install.packages(tidyverse)
 library(tidyverse)
 ```
-
-The tutorial is written with `r R.version$version.string` which comes with a native 
-pipe operator `|>`. If you are using an R version 3.x, you need to substitute it with `%>%`.
 
 ## Getting data
 
