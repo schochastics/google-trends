@@ -23,9 +23,13 @@ By the end of this tutorial, you will be able to obtain data from [Google trends
 
 [^1]:  Google trends shows how frequently a given search term is searched for, relative to the total search volume over a given time period.
 
-## Install and load
+## Target audience
 
-Installing the package is as simple as any other package:
+This tutorial is targeted for people who want to retrieve data from Google trends
+
+## Setting up the computational environment
+
+The following R package is required:
 ```{r}
 #| label: install
 #| eval: false
@@ -51,14 +55,18 @@ For data wrangling and visualization tasks we use the [tidyverse](https://www.ti
 #| message: false
 #| warning: false
 
-# install.packages(tidyverse)
+# install.packages("tidyverse")
 library(tidyverse)
 ```
 
+## Social Science Usecase
+
+Google Trends data can be a valuable resource for examining public interest and behavior patterns over time. For instance to
+analyze public health awareness and behavior in response to disease outbreaks. The objective here is to understand how awareness and public interest in specific health issues, like COVID-19, influenza, or mental health topics, change over time and how these patterns correlate with real-world events or policy implementations.
+
 ## Getting data
 
-The Package only has one function called `gtrends` which does all the querying of Google Trends automatically.
-You can get help about its parameters with
+The Package only has one function called `gtrends()` which does all the querying of Google Trends automatically. You can get help about its parameters with
 ```{r}
 #| label: help
 #| eval: false
@@ -69,7 +77,6 @@ You can get help about its parameters with
 Supplying just the keyword queries for global trend data of the last five years on a weekly basis.
 ```{r}
 #| label: example1
-#| cache: true
 
 covid_tbl <- gtrends(keyword = "covid")
 ```
@@ -84,8 +91,8 @@ names(covid_tbl)
 ```{r}
 #| label: plot_interest_over_time_covid
 covid_tbl$interest_over_time |> 
-    mutate(hits = as.numeric(gsub("<","",hits))) |> 
-    ggplot(aes(x=date,y=hits))+
+    mutate(hits = as.numeric(gsub("<", "", hits))) |> 
+    ggplot(aes(x = date, y = hits))+
     geom_line()
 
 ```
@@ -103,7 +110,7 @@ covax_tbl <- gtrends(keyword = c("covid","vaccine"))
 #| label: plot_interest_over_time_covax
 covax_tbl$interest_over_time |> 
     mutate(hits = as.numeric(gsub("<","",hits))) |> 
-    ggplot(aes(x=date,y=hits,col=keyword))+
+    ggplot(aes(x = date, y = hits, col = keyword))+
     geom_line()
 
 ```
@@ -114,10 +121,10 @@ The data frame `related_queries` lists search queries that are most related to t
 #| label: plot_related_queries_covid
 
 covid_tbl$related_queries |> 
-    filter(related_queries=="top") |> 
+    filter(related_queries == "top") |> 
     mutate(subject = as.numeric(subject)) |> 
     top_n(10,subject) |> 
-    ggplot(aes(x=subject,y=reorder(value,subject))) + 
+    ggplot(aes(x = subject,y = reorder(value, subject))) + 
     geom_col()
 
 ```
@@ -134,11 +141,10 @@ history of Google trends, set `time = "all"`. For a specific time window, say 20
 Here is an example of an interesting "anti-correlation" for two keywords on a short time window in the US.
 ```{r}
 #| label: example3
-#| cache: true
-cor_tbl <- gtrends(keyword = c("ramen","bitcoin"), geo = "US",time = "now 7-d")
+cor_tbl <- gtrends(keyword = c("ramen", "bitcoin"), geo = "US",time = "now 7-d")
 cor_tbl$interest_over_time |> 
-    mutate(hits = as.numeric(gsub("<","",hits))) |> 
-    ggplot(aes(x=date,y=hits,col=keyword))+
+    mutate(hits = as.numeric(gsub("<", "", hits))) |> 
+    ggplot(aes(x = date, y = hits, col = keyword))+
     geom_line()
 ```
 
