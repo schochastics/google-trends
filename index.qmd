@@ -34,7 +34,8 @@ The following R package is required:
 #| label: install
 #| eval: false
 
-install.packages("gtrendsR")
+#install.packages("gtrendsR")
+devtools::install_github("pmassicotte/gtrendsR")
 ```
 (*This tutorial is written with version `r packageVersion("gtrendsR")`.*)  
 
