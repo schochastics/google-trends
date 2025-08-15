@@ -4,10 +4,10 @@ author:
   - name:
       given: David
       family: Schoch
-    email: david.schoch@gesis.org
+    email: david@schochastics.net
     orcid: 0000-0003-2952-4812
     affiliations:
-      - name: "GESIS - Leibniz Institute for the Social Sciences"
+      - name: "Cynkra"
 csl: apa.csl
 format:
   html: default
@@ -59,6 +59,9 @@ For data wrangling and visualization tasks we use the [tidyverse](https://www.ti
 # install.packages("tidyverse")
 library(tidyverse)
 ```
+## Duration
+
+Around 30-60 minutes
 
 ## Social Science Usecase
 
