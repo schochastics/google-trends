@@ -12,6 +12,7 @@ csl: apa.csl
 format:
   html: default
   ipynb: default
+  md: default
 license: CC BY
 ---
 
@@ -125,7 +126,7 @@ The data frame `related_queries` lists search queries that are most related to t
 #| label: plot_related_queries_covid
 
 covid_tbl$related_queries |> 
-    filter(related_queries == "top") |> 
+    filter(related_topics == "top") |> 
     mutate(subject = as.numeric(subject)) |> 
     top_n(10,subject) |> 
     ggplot(aes(x = subject,y = reorder(value, subject))) + 
